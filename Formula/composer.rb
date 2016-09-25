@@ -1,6 +1,17 @@
 require File.expand_path("../../Abstract/abstract-php-phar", __FILE__)
 
 class Composer < AbstractPhpPhar
+  def phar_wrapper
+    <<-EOS.undent
+      #!/usr/bin/env php
+      <?php
+      array_shift($argv);
+      $arg_string = implode(' ', $argv);
+      passthru("/usr/bin/env php -d allow_url_fopen=On -d detect_unicode=Off #{libexec}/#{@real_phar_file} $arg_string", $return_var);
+      return $return_var;
+    EOS
+  end
+
   init
   desc "Dependency Manager for PHP"
   homepage "http://getcomposer.org"
