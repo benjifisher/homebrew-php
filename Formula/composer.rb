@@ -6,8 +6,8 @@ class Composer < AbstractPhpPhar
   homepage "http://getcomposer.org"
   url "https://getcomposer.org/download/1.2.1/composer.phar"
   sha256 "c2e04040b807a8530e5c83de56bdaaf63a0f183f8fd449bbe6e41f660e647427"
-  head "https://getcomposer.org/composer.phar"
   revision 1
+  head "https://getcomposer.org/composer.phar"
 
   bottle do
     cellar :any_skip_relocation
@@ -28,11 +28,10 @@ class Composer < AbstractPhpPhar
     <<-EOS.undent
       #!/usr/bin/env php
       <?php
-      array_shift($argv);
-      $arg_string = implode(' ', $argv);
-      $arg_string .= preg_match('/--(no-)?ansi/', $arg_string) ? '' : ' --ansi';
-      passthru("/usr/bin/env php -d allow_url_fopen=On -d detect_unicode=Off #{libexec}/#{@real_phar_file} $arg_string", $return_var);
-      return $return_var;
+      ini_set('allow_url_fopen', 'On');
+      ini_set('detect_unicode', 'Off');
+      Phar::loadPhar(__DIR__ . '/composer.phar');
+      require 'phar://composer.phar/bin/composer';
     EOS
   end
 end
