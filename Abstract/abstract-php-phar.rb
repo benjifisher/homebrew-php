@@ -24,8 +24,12 @@ class AbstractPhpPhar < Formula
 
   def phar_wrapper
     <<-EOS.undent
-      #!/usr/bin/env bash
-      /usr/bin/env php -d allow_url_fopen=On -d detect_unicode=Off #{libexec}/#{@real_phar_file} "$@"
+      #!/usr/bin/env php
+      <?php
+      ini_set('allow_url_fopen', 'On');
+      ini_set('detect_unicode', 'Off');
+      Phar::loadPhar('#{libexec}/#{@real_phar_file}');
+      require 'phar://#{phar_file}/bin/#{phar_bin}';
     EOS
   end
 
